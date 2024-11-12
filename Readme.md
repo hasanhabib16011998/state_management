@@ -9,10 +9,11 @@ The useReducer syntax looks like this:
 const [state, dispatch] = useReducer(reducer, initialState);
 ```
 
-state: The current state of your component.
-dispatch: A function used to send actions to the reducer.
-reducer: A function that determines how the state should change in response to an action.
-initialState: The initial state value for your component.
+`state`: The current state of your component.
+`dispatch`: A function used to send actions to the reducer.
+`reducer`: A function that determines how the state should change in response to an action.
+`initialState`: The initial state value for your component.
+
 Components of useReducer
 Reducer Function:
 
