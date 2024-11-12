@@ -1,5 +1,5 @@
 import './App.css';
-import { useState } from "react";
+import { useState,useEffect } from "react";
 
 
 function NameList() {
@@ -43,15 +43,42 @@ function Counter() {
   );
 }
 
+
+function NameEffect(){
+  const [names,setNames] = useState([]);
+
+  useEffect(()=>{
+    fetch("/names.json")
+    .then((response)=>response.json())
+    .then((data)=> setNames(data));
+  },[]);
+
+  const [selectedName,setSelectedName] = useState(null);
+
+  return(
+    <div>
+      <div>
+        {names.map((name)=>(
+          <button onClick={()=>setSelectedName(name)}>{name}</button>
+        ))}
+      </div>
+      <div>{selectedName}</div>
+    </div>
+  )
+}
+
 function App() {
 
   return (
     <div className="App">
+    <h2>Usestate demo</h2>
     <Counter/>
     <Counter/>
     <Counter/>
-
     <NameList/>
+
+    <h2>Useeffect demo</h2>
+    <NameEffect/>
 
     </div>
   )
