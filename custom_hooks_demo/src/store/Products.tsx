@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createContext,useContext } from 'react';
+import React, { useEffect, useState, useReducer, createContext,useContext, useCallback, useMemo } from 'react';
 
 interface Products {
   id: number;
@@ -6,25 +6,80 @@ interface Products {
   price: number;
   description: string;
   category: string;
-  image: string;
+  images: string[];
   rating: {
     rate: number;
     count: number;
   };
 }
 
+export function SearchBox(){
+  const {search,setSearch}= useProducts();
+  return (
+    <div className="search-box">
+      <input
+        type="text"
+        placeholder="Search products..."
+        value={search}
+        onChange={(e)=>setSearch(e.target.value)}
+        className="search-input"
+      />
+    </div>
+  );
+   
+}
 
 function useProductSource():{
   products: Products[];
+  search:string;
+  setSearch:(search:string)=>void;
 } {
-  const[products,setProducts] = useState<Products[]>([]);
+
+  type ProductState={
+    products:Products[],
+    search:string;
+  }
+  type ProductAction = 
+    | { type: "setProducts"; payload: Products[] }
+    | { type: "setSearch"; payload: string };
+
+  const [{products,search },dispatch] = useReducer((state:ProductState,action:ProductAction)=>{
+    switch(action.type){
+      default:
+        return state;
+      case "setProducts":
+        return {...state,products:action.payload};
+      case "setSearch":
+        return {...state,search:action.payload};
+    }
+
+  },{
+    products:[],
+    search:"",
+  });
 
   useEffect(()=>{
-    fetch('https://fakestoreapi.com/products')
+    fetch('https://dummyjson.com/products')
     .then(res=>res.json())
-    .then(json=>setProducts(json))
+    .then((json)=>dispatch({
+      type:"setProducts",
+      payload:json.products,
+    }))
   },[]);
-  return {products};
+
+  const setSearch = useCallback((search:string)=>{
+    dispatch({
+      type:"setSearch",
+      payload:search,
+    });
+  },[]);
+
+  const filteredProducts = useMemo(
+    () => products.filter((p) => p.title.toLowerCase().includes(search)),
+    [products, search]
+  );
+  
+  return { products:filteredProducts,search,setSearch};
 
 }
 
@@ -41,7 +96,7 @@ export const ProductCard = () => {
     <div className="product-list">
       {products.map((p) => (
         <div key={p.id} className="product-card">
-          <img src={p.image} alt={p.title} className="product-image" />
+          <img src={p.images[0]} alt={p.title} className="product-image" />
           <div className="product-details">
             <h2 className="product-title">{p.title}</h2>
             <p className="product-price">${p.price.toFixed(2)}</p>

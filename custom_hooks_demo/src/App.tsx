@@ -1,5 +1,8 @@
-import { ProductCard, ProductProvider } from "./store/Products";
+import { ProductCard, ProductProvider,SearchBox } from "./store/Products";
 import './App.css';
+
+
+
 
 function App() {
 
@@ -8,6 +11,7 @@ function App() {
 
 
       <ProductProvider>
+        <SearchBox/>
         <ProductCard/>
       </ProductProvider>
 
